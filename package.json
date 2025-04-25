@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -23,11 +24,13 @@
     "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@biomejs/biome": "^1.9.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
     "prisma": "^6.6.0",
     "tailwindcss": "^4",
     "tsx": "^4.19.3",
