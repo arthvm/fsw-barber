@@ -11,10 +11,16 @@ import { db } from './_lib/prisma'
 
 export default async function Home() {
   const barbershops = await db.barbershop.findMany({})
+  const popularBarbershops = await db.barbershop.findMany({
+    orderBy: {
+      name: 'desc',
+    },
+  })
 
   return (
     <div>
       <Header />
+
       <div className="p-5 space-y-6">
         <div>
           <h2 className="text-xl font-bold">Ola, Arthur!</h2>
@@ -41,9 +47,10 @@ export default async function Home() {
           <h2 className="uppercase text-gray-400 font-bold text-xs">
             Agendamentos
           </h2>
+
           <Card className="p-0">
             <CardContent className="flex justify-between p-0">
-              <div className="flex flex-col gap-2 py-5 pl-5">
+              <div className="flex flex-col gap-2 py-3 pl-3">
                 <Badge className="w-fit">Confirmado</Badge>
                 <h3 className="font-semibold">Corte de Cabelo</h3>
 
@@ -79,7 +86,29 @@ export default async function Home() {
             ))}
           </div>
         </div>
+
+        <div className="flex flex-col gap-3">
+          <h2 className="text-xs font-bold uppercase text-gray-400">
+            Populares
+          </h2>
+
+          <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
+            {popularBarbershops.map(barbershop => (
+              <BarbershopCard key={barbershop.id} barbershop={barbershop} />
+            ))}
+          </div>
+        </div>
       </div>
+
+      <footer>
+        <Card className="rounded-b-none px-5 py-6">
+          <CardContent>
+            <p className="text-sm text-gray-400">
+              © 2023 Copyright <span className="font-bold">FSW Barber</span>
+            </p>
+          </CardContent>
+        </Card>
+      </footer>
     </div>
   )
 }
