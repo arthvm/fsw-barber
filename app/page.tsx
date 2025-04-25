@@ -7,6 +7,7 @@ import { Badge } from './_components/ui/badge'
 import { Button } from './_components/ui/button'
 import { Card, CardContent } from './_components/ui/card'
 import { Input } from './_components/ui/input'
+import { quickSearchOptions } from './_constants/search'
 import { db } from './_lib/prisma'
 
 export default async function Home() {
@@ -32,6 +33,24 @@ export default async function Home() {
           <Button size={'icon'}>
             <SearchIcon />
           </Button>
+        </div>
+
+        <div className="flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          {quickSearchOptions.map(quickSearchOption => (
+            <Button
+              key={quickSearchOption.title}
+              className="gap-2"
+              variant={'secondary'}
+            >
+              <Image
+                src={quickSearchOption.imageUrl}
+                width={16}
+                height={16}
+                alt={quickSearchOption.title}
+              />
+              {quickSearchOption.title}
+            </Button>
+          ))}
         </div>
 
         <div className="relative w-full h-[150px]">
