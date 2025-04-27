@@ -1,5 +1,6 @@
 import { StarIcon } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Barbershop } from '../generated/prisma'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
@@ -35,8 +36,8 @@ export function BarbershopCard({ barbershop }: BarbershopCardProps) {
             </p>
           </div>
 
-          <Button variant={'secondary'} className="w-full">
-            Reservar
+          <Button variant={'secondary'} className="w-full" asChild>
+            <Link href={`/barbershops/${barbershop.id}`}>Reservar</Link>
           </Button>
         </div>
       </CardContent>
