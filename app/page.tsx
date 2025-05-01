@@ -1,11 +1,9 @@
-import { SearchIcon } from 'lucide-react'
 import Image from 'next/image'
 import { BarbershopCard } from './_components/barbershop-card'
 import { BookingCard } from './_components/booking-card'
 import { Header } from './_components/header'
+import { Search } from './_components/search'
 import { Button } from './_components/ui/button'
-import { Card, CardContent } from './_components/ui/card'
-import { Input } from './_components/ui/input'
 import { quickSearchOptions } from './_constants/search'
 import { db } from './_lib/prisma'
 
@@ -27,12 +25,7 @@ export default async function Home() {
           <p>Sexta-feira, 25 de Abril</p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Input placeholder="Faca sua busca..." />
-          <Button size={'icon'}>
-            <SearchIcon />
-          </Button>
-        </div>
+        <Search />
 
         <div className="flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
           {quickSearchOptions.map(quickSearchOption => (
