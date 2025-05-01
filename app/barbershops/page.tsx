@@ -5,21 +5,40 @@ import { db } from '../_lib/prisma'
 
 interface BarbershopsPageProps {
   searchParams: Promise<{
-    search?: string
+    name?: string
+    service?: string
   }>
 }
 
 export default async function BarbershopsPage({
   searchParams,
 }: BarbershopsPageProps) {
-  const { search } = await searchParams
+  const { name, service } = await searchParams
 
   const barbershops = await db.barbershop.findMany({
     where: {
-      name: {
-        contains: search,
-        mode: 'insensitive',
-      },
+      AND: [
+        name
+          ? {
+              name: {
+                contains: name,
+                mode: 'insensitive',
+              },
+            }
+          : {},
+        service
+          ? {
+              services: {
+                some: {
+                  name: {
+                    contains: service,
+                    mode: 'insensitive',
+                  },
+                },
+              },
+            }
+          : {},
+      ],
     },
   })
 
@@ -32,7 +51,7 @@ export default async function BarbershopsPage({
 
         <div className="space-y-3">
           <h2 className="text-xs font-bold uppercase text-gray-400">
-            Resultados para "{search}"
+            Resultados para "{name || service}"
           </h2>
 
           <div className="grid grid-cols-2 gap-4">

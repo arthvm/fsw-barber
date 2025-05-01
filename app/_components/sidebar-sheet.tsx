@@ -4,6 +4,7 @@ import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon } from 'lucide-react'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { quickSearchOptions } from '../_constants/search'
 import { Avatar, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
@@ -20,6 +21,9 @@ import { SheetClose, SheetContent, SheetHeader, SheetTitle } from './ui/sheet'
 
 export function SiderbarSheet() {
   const { data } = useSession()
+
+  const searchParams = useSearchParams()
+  const shopNameFilter = searchParams.get('name')
 
   async function handleLoginWithGoogle() {
     await signIn('google')
@@ -110,19 +114,21 @@ export function SiderbarSheet() {
 
         <div className="flex flex-col gap-1">
           {quickSearchOptions.map(option => (
-            <Button
-              key={option.title}
-              className="justify-start gap-2"
-              variant={'ghost'}
-            >
-              <Image
-                src={option.imageUrl}
-                height={18}
-                width={18}
-                alt={option.title}
-              />
-              {option.title}
-            </Button>
+            <SheetClose key={option.title} asChild>
+              <Button className="justify-start gap-2" variant={'ghost'} asChild>
+                <Link
+                  href={`/barbershops?service=${option.title}${shopNameFilter ? `&name=${shopNameFilter}` : ''}`}
+                >
+                  <Image
+                    src={option.imageUrl}
+                    height={18}
+                    width={18}
+                    alt={option.title}
+                  />
+                  {option.title}
+                </Link>
+              </Button>
+            </SheetClose>
           ))}
         </div>
 

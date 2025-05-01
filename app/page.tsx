@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { BarbershopCard } from './_components/barbershop-card'
 import { BookingCard } from './_components/booking-card'
 import { Header } from './_components/header'
@@ -28,19 +29,22 @@ export default async function Home() {
         <Search />
 
         <div className="flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
-          {quickSearchOptions.map(quickSearchOption => (
+          {quickSearchOptions.map(option => (
             <Button
-              key={quickSearchOption.title}
+              key={option.title}
               className="gap-2"
               variant={'secondary'}
+              asChild
             >
-              <Image
-                src={quickSearchOption.imageUrl}
-                width={16}
-                height={16}
-                alt={quickSearchOption.title}
-              />
-              {quickSearchOption.title}
+              <Link href={`/barbershops?service=${option.title}`}>
+                <Image
+                  src={option.imageUrl}
+                  width={16}
+                  height={16}
+                  alt={option.title}
+                />
+                {option.title}
+              </Link>
             </Button>
           ))}
         </div>
