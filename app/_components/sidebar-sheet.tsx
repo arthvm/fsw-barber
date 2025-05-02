@@ -1,21 +1,15 @@
 'use client'
 
 import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon } from 'lucide-react'
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { quickSearchOptions } from '../_constants/search'
+import { SignInDialog } from './signin-dialog'
 import { Avatar, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from './ui/dialog'
+import { Dialog, DialogContent, DialogTrigger } from './ui/dialog'
 import { Separator } from './ui/separator'
 import { SheetClose, SheetContent, SheetHeader, SheetTitle } from './ui/sheet'
 
@@ -24,10 +18,6 @@ export function SiderbarSheet() {
 
   const searchParams = useSearchParams()
   const shopNameFilter = searchParams.get('name')
-
-  async function handleLoginWithGoogle() {
-    await signIn('google')
-  }
 
   async function handleLogout() {
     signOut()
@@ -66,26 +56,7 @@ export function SiderbarSheet() {
                 </DialogTrigger>
 
                 <DialogContent className="w-[90%]">
-                  <DialogHeader>
-                    <DialogTitle>Faça login na plataforma</DialogTitle>
-                    <DialogDescription>
-                      Conecte-se usando sua conta do Google
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <Button
-                    variant={'outline'}
-                    onClick={handleLoginWithGoogle}
-                    className="gap-2 font-bold"
-                  >
-                    <Image
-                      src={'/google.svg'}
-                      alt="Logar com o google"
-                      width={18}
-                      height={18}
-                    />
-                    Google
-                  </Button>
+                  <SignInDialog />
                 </DialogContent>
               </Dialog>
             </>
