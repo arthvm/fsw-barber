@@ -141,7 +141,6 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
 
       await createBooking({
         serviceId: service.id,
-        userId: data?.user?.id,
         date: bookingTime,
       })
 
