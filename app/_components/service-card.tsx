@@ -1,6 +1,6 @@
 'use client'
 
-import { addDays, format, set } from 'date-fns'
+import { addDays, set } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
@@ -13,6 +13,7 @@ import type {
   BarbershopService,
   Booking,
 } from '../generated/prisma'
+import { BookingSummary } from './booking-summary'
 import { SignInDialog } from './signin-dialog'
 import { Button } from './ui/button'
 import { Calendar } from './ui/calendar'
@@ -256,40 +257,12 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
                       <Separator />
 
                       <div className="px-5">
-                        <Card className="p-0">
-                          <CardContent className="p-3 space-y-3">
-                            <div className="flex justify-between items-center">
-                              <h2 className="font-bold">{service.name}</h2>
-                              <p className="text-sm font-bold">
-                                {Intl.NumberFormat('pt-BR', {
-                                  style: 'currency',
-                                  currency: 'BRL',
-                                }).format(Number(service.price))}
-                              </p>
-                            </div>
-
-                            <div className="flex justify-between items-center">
-                              <h2 className="text-sm text-gray-400">Data</h2>
-                              <p className="text-sm">
-                                {format(selectedDay, "d 'de' MMMM", {
-                                  locale: ptBR,
-                                })}
-                              </p>
-                            </div>
-
-                            <div className="flex justify-between items-center">
-                              <h2 className="text-sm text-gray-400">Horário</h2>
-                              <p className="text-sm">{selectedTime}</p>
-                            </div>
-
-                            <div className="flex justify-between items-center">
-                              <h2 className="text-sm text-gray-400">
-                                Barbearia
-                              </h2>
-                              <p className="text-sm">{barbershop.name}</p>
-                            </div>
-                          </CardContent>
-                        </Card>
+                        <BookingSummary
+                          service={service}
+                          barbershopName={barbershop.name}
+                          selectedTime={selectedTime}
+                          selectedDay={selectedDay}
+                        />
                       </div>
                     </>
                   )}
