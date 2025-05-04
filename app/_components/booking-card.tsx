@@ -147,7 +147,7 @@ export function BookingCard({ booking }: BookingCardProps) {
               {isConfirmed ? 'Confirmado' : 'Finalizado'}
             </Badge>
             <BookingSummary
-              service={booking.service}
+              service={JSON.parse(JSON.stringify(booking.service))}
               barbershopName={barbershop.name}
               selectedDay={booking.date}
               selectedTime={format(booking.date, 'HH:mm', { locale: ptBR })}

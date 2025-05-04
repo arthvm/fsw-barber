@@ -288,7 +288,7 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
 
                       <div className="px-5">
                         <BookingSummary
-                          service={service}
+                          service={JSON.parse(JSON.stringify(service))}
                           barbershopName={barbershop.name}
                           selectedTime={selectedTime}
                           selectedDay={selectedDay}
