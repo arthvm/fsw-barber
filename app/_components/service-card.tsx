@@ -96,6 +96,18 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
   const [selectedDay, setSelectedDay] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState<string | undefined>()
 
+  const selectedDate = useMemo(() => {
+    if (!selectedDay || !selectedTime) {
+      return
+    }
+
+    const [hour, minute] = selectedTime.split(':')
+    return set(selectedDay, {
+      hours: Number(hour),
+      minutes: Number(minute),
+    })
+  }, [selectedDay, selectedTime])
+
   const [dayBookings, setDayBookings] = useState<Booking[]>([])
 
   const [isBookingSheetOpen, setIsBookingSheetOpen] = useState(false)
@@ -153,20 +165,13 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
 
   async function handleCreateBooking() {
     try {
-      if (!selectedDay || !selectedTime) {
+      if (!selectedDate) {
         return
       }
 
-      const [hour, minute] = selectedTime.split(':')
-
-      const bookingTime = set(selectedDay, {
-        hours: Number(hour),
-        minutes: Number(minute),
-      })
-
       await createBooking({
         serviceId: service.id,
-        date: bookingTime,
+        date: selectedDate,
       })
 
       handleSheetOpenChange()
@@ -282,16 +287,15 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
                     </>
                   )}
 
-                  {selectedDay && selectedTime && (
+                  {selectedDate && (
                     <>
                       <Separator />
 
                       <div className="px-5">
                         <BookingSummary
                           service={JSON.parse(JSON.stringify(service))}
-                          barbershopName={barbershop.name}
-                          selectedTime={selectedTime}
-                          selectedDay={selectedDay}
+                          barbershop={barbershop}
+                          selectedDate={selectedDate}
                         />
                       </div>
                     </>
@@ -300,7 +304,7 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
                   <SheetFooter className="px-5">
                     <Button
                       onClick={handleCreateBooking}
-                      disabled={!selectedDay || !selectedTime}
+                      disabled={!selectedDate}
                     >
                       Confirmar
                     </Button>

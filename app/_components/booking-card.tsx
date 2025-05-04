@@ -148,9 +148,8 @@ export function BookingCard({ booking }: BookingCardProps) {
             </Badge>
             <BookingSummary
               service={JSON.parse(JSON.stringify(booking.service))}
-              barbershopName={barbershop.name}
-              selectedDay={booking.date}
-              selectedTime={format(booking.date, 'HH:mm', { locale: ptBR })}
+              barbershop={barbershop}
+              selectedDate={booking.date}
             />
           </div>
 

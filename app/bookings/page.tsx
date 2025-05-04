@@ -57,6 +57,9 @@ export default async function BookingsPage() {
 
       <div className="px-5 py-6 space-y-6">
         <h1 className="font-bold text-xl">Agendamentos</h1>
+        {confirmedBookings.length === 0 && concludedBookings.length === 0 && (
+          <p className="text-gray-400">Você não tem agendamentos.</p>
+        )}
 
         {confirmedBookings.length > 0 && (
           <div className="space-y-3">
