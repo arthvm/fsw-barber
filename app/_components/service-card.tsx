@@ -1,10 +1,10 @@
 'use client'
 
-import { addDays, set } from 'date-fns'
+import { isPast, set } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { createBooking } from '../_actions/create-booking'
 import { getBookings } from '../_actions/get-bookings'
@@ -57,9 +57,22 @@ const TIME_LIST = [
   '18:00',
 ]
 
-function getTimeList(bookings: Booking[]) {
+interface GetTimeListProps {
+  bookings: Booking[]
+  selectedDay: Date
+}
+
+function getTimeList({ bookings, selectedDay }: GetTimeListProps) {
   const timeList = TIME_LIST.filter(time => {
     const [hour, minute] = time.split(':')
+
+    const hasTimePassed = isPast(
+      set(selectedDay, { hours: Number(hour), minutes: Number(minute) })
+    )
+
+    if (hasTimePassed) {
+      return false
+    }
 
     const hasBookingOnTime = bookings.some(
       booking =>
@@ -87,6 +100,17 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
 
   const [isBookingSheetOpen, setIsBookingSheetOpen] = useState(false)
   const [isSignInDialogOpen, setIsSignInDialogOpen] = useState(false)
+
+  const timeList = useMemo(() => {
+    if (!selectedDay) {
+      return []
+    }
+
+    return getTimeList({
+      bookings: dayBookings,
+      selectedDay,
+    })
+  }, [dayBookings, selectedDay])
 
   useEffect(() => {
     if (!selectedDay) return
@@ -205,7 +229,7 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
                     locale={ptBR}
                     selected={selectedDay}
                     onSelect={handleDateSelect}
-                    fromDate={addDays(new Date(), 1)}
+                    fromDate={new Date()}
                     styles={{
                       head_cell: {
                         width: '100%',
@@ -236,18 +260,24 @@ export function ServiceCard({ service, barbershop }: ServiceCardProps) {
                       <Separator />
 
                       <div className="flex overflow-x-auto gap-3 px-5 [&::-webkit-scrollbar]:hidden">
-                        {getTimeList(dayBookings).map(time => (
-                          <Button
-                            key={time}
-                            variant={
-                              selectedTime === time ? 'default' : 'outline'
-                            }
-                            className="rounded-full"
-                            onClick={() => handleTimeSelect(time)}
-                          >
-                            {time}
-                          </Button>
-                        ))}
+                        {timeList.length > 0 ? (
+                          timeList.map(time => (
+                            <Button
+                              key={time}
+                              variant={
+                                selectedTime === time ? 'default' : 'outline'
+                              }
+                              className="rounded-full"
+                              onClick={() => handleTimeSelect(time)}
+                            >
+                              {time}
+                            </Button>
+                          ))
+                        ) : (
+                          <p className="text-xs">
+                            Nao há horários disponíveis para esse dia
+                          </p>
+                        )}
                       </div>
                     </>
                   )}
