@@ -9,6 +9,7 @@ import { Header } from './_components/header'
 import { Search } from './_components/search'
 import { Button } from './_components/ui/button'
 import { quickSearchOptions } from './_constants/search'
+import { getConfirmedBookings } from './_data/get-confirmed-bookings'
 import { authOptions } from './_lib/auth'
 import { db } from './_lib/prisma'
 
@@ -22,26 +23,7 @@ export default async function Home() {
     },
   })
 
-  const confirmedBookings = data?.user
-    ? await db.booking.findMany({
-        where: {
-          userId: data.user.id,
-          date: {
-            gte: new Date(),
-          },
-        },
-        include: {
-          service: {
-            include: {
-              barbershop: true,
-            },
-          },
-        },
-        orderBy: {
-          date: 'asc',
-        },
-      })
-    : []
+  const confirmedBookings = await getConfirmedBookings()
 
   return (
     <div>
