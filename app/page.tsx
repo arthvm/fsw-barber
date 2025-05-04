@@ -1,3 +1,5 @@
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { getServerSession } from 'next-auth'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -47,8 +49,14 @@ export default async function Home() {
 
       <div className="p-5 space-y-6">
         <div>
-          <h2 className="text-xl font-bold">Ola, Arthur!</h2>
-          <p>Sexta-feira, 25 de Abril</p>
+          <h2 className="text-xl font-bold">
+            Olá, {data?.user ? data?.user.name?.split(' ')[0] : 'bem-vindo'}!
+          </h2>
+          <p className="capitalize">
+            {format(new Date(), 'EEEE, dd', { locale: ptBR })}
+            <span className="lowercase"> de </span>
+            {format(new Date(), 'MMMM', { locale: ptBR })}
+          </p>
         </div>
 
         <Search />
