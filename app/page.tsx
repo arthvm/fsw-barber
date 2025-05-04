@@ -1,3 +1,4 @@
+import { getServerSession } from 'next-auth'
 import Image from 'next/image'
 import Link from 'next/link'
 import { BarbershopCard } from './_components/barbershop-card'
@@ -6,15 +7,39 @@ import { Header } from './_components/header'
 import { Search } from './_components/search'
 import { Button } from './_components/ui/button'
 import { quickSearchOptions } from './_constants/search'
+import { authOptions } from './_lib/auth'
 import { db } from './_lib/prisma'
 
 export default async function Home() {
+  const data = await getServerSession(authOptions)
+
   const barbershops = await db.barbershop.findMany({})
   const popularBarbershops = await db.barbershop.findMany({
     orderBy: {
       name: 'desc',
     },
   })
+
+  const confirmedBookings = data?.user
+    ? await db.booking.findMany({
+        where: {
+          userId: data.user.id,
+          date: {
+            gte: new Date(),
+          },
+        },
+        include: {
+          service: {
+            include: {
+              barbershop: true,
+            },
+          },
+        },
+        orderBy: {
+          date: 'asc',
+        },
+      })
+    : []
 
   return (
     <div>
@@ -63,7 +88,11 @@ export default async function Home() {
             Agendamentos
           </h2>
 
-          <BookingCard />
+          <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+            {confirmedBookings.map(booking => (
+              <BookingCard key={booking.id} booking={booking} />
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">
