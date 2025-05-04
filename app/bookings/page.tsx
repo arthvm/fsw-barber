@@ -58,23 +58,27 @@ export default async function BookingsPage() {
       <div className="px-5 py-6 space-y-6">
         <h1 className="font-bold text-xl">Agendamentos</h1>
 
-        <div className="space-y-3">
-          <h2 className="text-xs font-bold uppercase text-gray-400">
-            Confirmados
-          </h2>
-          {confirmedBookings.map(booking => (
-            <BookingCard key={booking.id} booking={booking} />
-          ))}
-        </div>
+        {confirmedBookings.length > 0 && (
+          <div className="space-y-3">
+            <h2 className="text-xs font-bold uppercase text-gray-400">
+              Confirmados
+            </h2>
+            {confirmedBookings.map(booking => (
+              <BookingCard key={booking.id} booking={booking} />
+            ))}
+          </div>
+        )}
 
-        <div className="space-y-3">
-          <h2 className="text-xs font-bold uppercase text-gray-400">
-            Finalizados
-          </h2>
-          {concludedBookings.map(booking => (
-            <BookingCard key={booking.id} booking={booking} />
-          ))}
-        </div>
+        {concludedBookings.length > 0 && (
+          <div className="space-y-3">
+            <h2 className="text-xs font-bold uppercase text-gray-400">
+              Finalizados
+            </h2>
+            {concludedBookings.map(booking => (
+              <BookingCard key={booking.id} booking={booking} />
+            ))}
+          </div>
+        )}
       </div>
     </>
   )

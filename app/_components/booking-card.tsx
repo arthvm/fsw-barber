@@ -1,16 +1,35 @@
+'use client'
+
 import { format, isFuture } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import Image from 'next/image'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { deleteBooking } from '../_actions/delete-booking'
 import type { Prisma } from '../generated/prisma'
 import { BookingSummary } from './booking-summary'
 import { PhoneItem } from './phone-item'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './ui/alert-dialog'
 import { Avatar, AvatarImage } from './ui/avatar'
 import { Badge } from './ui/badge'
+import { Button } from './ui/button'
 import { Card, CardContent } from './ui/card'
 import { Separator } from './ui/separator'
 import {
   Sheet,
+  SheetClose,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -34,8 +53,25 @@ export function BookingCard({ booking }: BookingCardProps) {
   } = booking
   const isConfirmed = isFuture(booking.date)
 
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+  function handleSheetOpenChange(isOpen: boolean) {
+    setIsSheetOpen(isOpen)
+  }
+
+  async function handleCancelBooking() {
+    try {
+      await deleteBooking(booking.id)
+      setIsSheetOpen(false)
+      toast.success('Reserva cancelada com sucesso!')
+    } catch (error) {
+      console.error(error)
+      toast.error('Erro ao cancelar a reserva. Tente novamente.')
+    }
+  }
+
   return (
-    <Sheet>
+    <Sheet open={isSheetOpen} onOpenChange={handleSheetOpenChange}>
       <SheetTrigger className="w-full">
         <Card className="p-0 min-w-[90%]">
           <CardContent className="flex justify-between p-0">
@@ -46,7 +82,9 @@ export function BookingCard({ booking }: BookingCardProps) {
               >
                 {isConfirmed ? 'Confirmado' : 'Finalizado'}
               </Badge>
-              <h3 className="font-semibold">{booking.service.name}</h3>
+              <h3 className="font-semibold text-left">
+                {booking.service.name}
+              </h3>
 
               <div className="flex items-center gap-2">
                 <Avatar className="size-6">
@@ -71,7 +109,7 @@ export function BookingCard({ booking }: BookingCardProps) {
         </Card>
       </SheetTrigger>
 
-      <SheetContent className="w-[90%]">
+      <SheetContent className="w-[85%]">
         <SheetHeader>
           <SheetTitle className="text-left">Informacões da Reserva</SheetTitle>
         </SheetHeader>
@@ -122,6 +160,52 @@ export function BookingCard({ booking }: BookingCardProps) {
             ))}
           </div>
         </div>
+
+        <SheetFooter>
+          <div className="flex items-center gap-3 w-full">
+            <SheetClose asChild>
+              <Button variant={'outline'} className="flex-1/2">
+                Voltar
+              </Button>
+            </SheetClose>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  disabled={!isConfirmed}
+                  variant={'destructive'}
+                  className="flex-1/2"
+                >
+                  Cancelar Reserva
+                </Button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Cancelar Reserva</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja cancelar esse agendamento?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter className="flex flex-row gap-3">
+                  <AlertDialogCancel className="flex-1/2">
+                    Voltar
+                  </AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button
+                      className="flex-1/2"
+                      variant={'destructive'}
+                      onClick={handleCancelBooking}
+                    >
+                      Confirmar
+                    </Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   )
